@@ -10,11 +10,11 @@ This project follows a simple expert-system layout:
 ## Inference Flow
 
 1. Clear any previous session data.
-2. Try a possible fault from the knowledge base.
-3. Verify each required symptom.
-4. If a symptom is unknown, ask the user and cache the answer.
-5. If all symptoms match, return the diagnosis and recommendation.
-6. If not, backtrack and try the next fault.
+2. Ask the user each symptom question once and store the answer.
+3. Search the knowledge base for exact fault matches.
+4. If all symptoms for a fault are confirmed, return that diagnosis.
+5. If multiple faults match, list the additional exact matches.
+6. If no exact match is found, rank close matches based on partial symptom overlap.
 
 ## Suggested Future Expansion
 

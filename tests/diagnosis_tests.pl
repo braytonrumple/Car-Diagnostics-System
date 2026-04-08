@@ -179,4 +179,31 @@ test(rank_partial_matches_when_no_exact_result) :-
     remember_yes(lights_dim),
     ranked_diagnoses([_Score-dead_battery | _]).
 
+test(select_next_question_from_active_faults) :-
+    clear_session,
+    remember_yes(engine_wont_start),
+    once(next_question_symptom(Symptom)),
+    memberchk(Symptom, [lights_dim, clicking_sound, dashboard_lights_on, single_click, no_dashboard_power, electrical_accessories_off]).
+
+test(mark_diagnosis_complete_when_exact_match_isolated) :-
+    clear_session,
+    remember_yes(engine_wont_start),
+    remember_yes(lights_dim),
+    remember_yes(clicking_sound),
+    remember_no(battery_warning_light),
+    remember_no(engine_stalls),
+    remember_no(dashboard_lights_on),
+    remember_no(single_click),
+    remember_no(no_dashboard_power),
+    remember_no(electrical_accessories_off),
+    diagnosis_complete.
+
+test(return_matched_symptoms_for_exact_diagnosis) :-
+    clear_session,
+    remember_yes(engine_wont_start),
+    remember_yes(lights_dim),
+    remember_yes(clicking_sound),
+    matched_symptoms(dead_battery, Symptoms),
+    Symptoms == [engine_wont_start, lights_dim, clicking_sound].
+
 :- end_tests(diagnosis).
