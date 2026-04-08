@@ -12,7 +12,8 @@
 :- use_module('./session.pl').
 :- use_module('../kb/faults.pl').
 
-% Find the best fully matching fault whose symptoms all match the user's answers.
+% Find the first exact match for CLI-style use. This predicate is intended to
+% return a single best diagnosis rather than be backtracked over for all matches.
 diagnose(Fault, Recommendation) :-
     matching_diagnoses([Fault | _]),
     recommendation(Fault, Recommendation),
@@ -175,19 +176,22 @@ same_fault_set(Left, Right) :-
     msort(Right, SortedRight),
     SortedLeft = SortedRight.
 
-highest_ranked_faults([Score-Fault | Rest], Faults) :-
-    !,
-    highest_ranked_faults(Rest, Score, [Fault], Faults).
-highest_ranked_faults([Fault | Rest], Faults) :-
-    scored_fault(Fault, Score),
-    highest_ranked_faults(Rest, Score, [Fault], Faults).
+highest_ranked_faults(Entries, Faults) :-
+    normalize_ranked_entries(Entries, RankedEntries),
+    RankedEntries = [BestScore-BestFault | Rest],
+    highest_ranked_faults(Rest, BestScore, [BestFault], Faults).
+
+normalize_ranked_entries([], []).
+normalize_ranked_entries([Entry | Rest], [Score-Fault | RankedRest]) :-
+    ranked_entry(Entry, Score-Fault),
+    normalize_ranked_entries(Rest, RankedRest).
+
+ranked_entry(Score-Fault, Score-Fault).
+ranked_entry(Fault, Score-Fault) :-
+    scored_fault(Fault, Score).
 
 highest_ranked_faults([], _BestScore, Faults, Faults).
 highest_ranked_faults([Score-Fault | Rest], BestScore, CurrentFaults, Faults) :-
-    !,
-    compare_fault_score(Score, Fault, Rest, BestScore, CurrentFaults, Faults).
-highest_ranked_faults([Fault | Rest], BestScore, CurrentFaults, Faults) :-
-    scored_fault(Fault, Score),
     compare_fault_score(Score, Fault, Rest, BestScore, CurrentFaults, Faults).
 
 compare_fault_score(Score, Fault, Rest, BestScore, CurrentFaults, Faults) :-

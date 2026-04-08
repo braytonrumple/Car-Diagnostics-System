@@ -19,6 +19,6 @@ This project follows a simple expert-system layout:
 ## Suggested Future Expansion
 
 - Split electrical and mechanical faults into separate files.
-- Add certainty scoring for partial matches.
+- Improve the current partial-match scoring into a more advanced confidence model.
 - Support multiple recommended next actions.
 - Log session results for later review.

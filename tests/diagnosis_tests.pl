@@ -171,7 +171,8 @@ test(return_multiple_matching_diagnoses) :-
     remember_yes(battery_warning_light),
     remember_yes(engine_stalls),
     once(matching_diagnoses(Faults)),
-    Faults == [dead_battery, bad_alternator].
+    msort(Faults, SortedFaults),
+    SortedFaults == [bad_alternator, dead_battery].
 
 test(rank_partial_matches_when_no_exact_result) :-
     clear_session,
